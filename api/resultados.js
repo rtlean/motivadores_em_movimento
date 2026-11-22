@@ -1,7 +1,9 @@
 import { sql, fail, UUID } from './_db.js'
+import { exigirSenha } from './_auth.js'
 import { isPermutation, validImp, validFel } from '../src/logic.js'
 
 export default async function handler(req, res) {
+  if (!exigirSenha(req, res)) return
   try {
     if (req.method === 'GET') {
       return res.json(await sql`select participante_id, ordem, imp, fel, mudanca, updated_at from resultados`)

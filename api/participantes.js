@@ -1,4 +1,5 @@
 import { sql, fail, UUID } from './_db.js'
+import { exigirSenha } from './_auth.js'
 import { TIMES, TEMPOS } from '../src/logic.js'
 
 function parse(body) {
@@ -13,6 +14,7 @@ function parse(body) {
 }
 
 export default async function handler(req, res) {
+  if (!exigirSenha(req, res)) return
   try {
     const id = req.query.id
     if (req.method === 'GET') {
