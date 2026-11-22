@@ -1,5 +1,14 @@
+export const CHAVE_SENHA = 'mm-senha'
+
 async function call(url, opts = {}) {
-  const r = await fetch(url, { headers: { 'Content-Type': 'application/json' }, ...opts })
+  const r = await fetch(url, { ...opts, headers: { 'Content-Type': 'application/json', 'x-app-password': localStorage.getItem(CHAVE_SENHA) || '' } })
+  if (r.status === 401) {
+    // Senha errada ou trocada: volta para a tela de senha.
+    localStorage.removeItem(CHAVE_SENHA)
+    sessionStorage.setItem('mm-senha-erro', '1')
+    location.reload()
+    return new Promise(() => {})
+  }
   if (r.status === 204) return null
   const data = await r.json().catch(() => ({}))
   if (!r.ok) throw new Error(data.error || 'Falha na comunicação com o servidor.')
